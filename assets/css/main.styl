@@ -18,10 +18,13 @@ a
 	&:hover
 		text-decoration: none
 
-#sidebar, #map
+#sidebar, #map, #content
 	position: absolute
 	top: 0
 	bottom: 0
+
+#map
+	top: 0
 
 .buttons
 	height: 24px
@@ -200,8 +203,25 @@ ul.autocomplete
 
 
 
+// Content div
+// ===========
 
+#content
+	left: sidebar-size
+	right: 0
+	margin: 3px
 
+	table
+		border-collapse: collapse
+
+	th
+		font-weight: bold
+
+	td, th
+		border: 1px solid #999
+		padding: 0.5rem
+		text-align: left
+		
 // Map
 // ===========
 #map

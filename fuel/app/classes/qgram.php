@@ -76,20 +76,21 @@ class Qgram {
 		$search = DB::quote($str);
 		$join_table = $join_table ? 'JOIN '.$join_table : '';
 		return DB::query('
-			SELECT t.id, t.name FROM '.$table.' AS t '.$join_table.' WHERE '.Qgram::search_likes($str).'
+			SELECT t.id, t.landholder_name AS name FROM '.$table.' AS t '.$join_table.' WHERE '.Qgram::search_likes($str).'
 			UNION (
-				SELECT t.id, t.name
-				FROM '.$table.' AS t '.$join_table.', '.$table.'_qgram AS tq, qgram AS q
+				SELECT t.id, t.landholder_name
+				FROM '.$table.' AS t '.$join_table.', landholders_qgram AS tq, qgram AS q
 				WHERE 
 					t.id = tq.id AND 
 					tq.qgram = q.qgram AND
 					ABS(tq.position - q.position) <= '.Qgram::k.' AND 
-					ABS(LENGTH(t.name) - LENGTH('.$search.')) <= '.Qgram::k.'
-				GROUP BY t.id, t.name
+					ABS(LENGTH(t.landholder_name) - LENGTH('.$search.')) <= '.Qgram::k.' AND
+					t.active = 1
+				GROUP BY t.id, t.landholder_name
 				HAVING
-					COUNT(*) >= LENGTH(t.name) - 1 - ('.Qgram::k.' - 1) * '.Qgram::q.' AND 
+					COUNT(*) >= LENGTH(t.landholder_name) - 1 - ('.Qgram::k.' - 1) * '.Qgram::q.' AND 
 					COUNT(*) >= LENGTH('.$search.') - 1 - ('.Qgram::k.' - 1) * '.Qgram::q.'
-				ORDER BY edit_distance(t.name, '.$search.')
+				ORDER BY edit_distance(t.landholder_name, '.$search.')
 			)
 		')->execute();
 	}
@@ -100,7 +101,7 @@ class Qgram {
 		ArrayUtil::combination($array, $likes);
 
 		$likes = array_map(function($item) { 
-			return 'name LIKE '.DB::quote('%'.implode('%', $item).'%');
+			return 't.active = 1 AND t.landholder_name LIKE '.DB::quote('%'.implode('%', $item).'%');
 		}, $likes);
 
 		return implode($likes, ' OR ');

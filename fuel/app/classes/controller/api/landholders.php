@@ -11,9 +11,8 @@ class Controller_Api_Landholders extends Controller_Rest
 			throw new Exception('search can provide query with at least three of lenght');
 		}
 		$data = Qgram::search(
-			'landholders', 
-			$query, 
-			'plot_landholders ON plot_landholders.landholder_id = t.id'
+			'plot_landholders', 
+			$query
 		);
 		return $this->response($data);
 	}

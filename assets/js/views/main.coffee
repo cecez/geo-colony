@@ -18,7 +18,8 @@ class App.View.Main extends Backbone.View
 		(new App.View.SearchTrail el: @$('#search-trail')).render()
 		(new App.View.SearchCity el: @$('#search-city')).render()
 		(new App.View.SearchLandholder el: @$('#search-landholder')).render()
-		
+		(new App.View.User el: @$('#sign-up-form')).render()
+
 		# storage
 		@storage = new App.Storage('lands')
 		@collection.bind 'add',    @addToStorage

@@ -1,0 +1,134 @@
+-- criando colunas para o conteudo das tabelas relacionadas
+ALTER TABLE `geo-colony`.`plots` ADD COLUMN `edge` VARCHAR(255) NULL  AFTER `updated_at` , ADD COLUMN `nucleu` VARCHAR(255) NULL  AFTER `edge` , ADD COLUMN `section` VARCHAR(255) NULL  AFTER `nucleu` ;
+
+-- atualizando lotes com o conteudo das tabelas relacionadas
+update plots
+
+set edge = (select name from edges where id = edge_id),
+nucleu = (select name from nucleus where id = nucleu_id),
+section = (select name from sections where id = section_id);
+
+-- removendo colunas de plots
+ALTER TABLE `geo-colony`.`plots` DROP COLUMN `edge_id` , DROP COLUMN `section_id` , DROP COLUMN `nucleu_id` 
+, DROP INDEX `edge_id` 
+, DROP INDEX `section_id` 
+, DROP INDEX `nucleu_id` ;
+
+-- removendo tabelas
+drop table `geo-colony`.`sections`;
+drop table `geo-colony`.`edges`;
+drop table `geo-colony`.`nucleus`;
+
+-- criando colunas dos proprietarios em plot_landholders
+ALTER TABLE `geo-colony`.`plot_landholders` ADD COLUMN `landholder_name` VARCHAR(255) NOT NULL  AFTER `updated_at` , ADD COLUMN `landholder_family` VARCHAR(255) NULL  AFTER `landholder_name` , ADD COLUMN `landholder_origin` VARCHAR(255) NULL  AFTER `landholder_family` ;
+
+-- importando dados para os novos campos
+update plot_landholders
+set
+landholder_name = (select name from landholders where id = landholder_id),
+landholder_family = (select family from landholders where id = landholder_id),
+landholder_origin = (select origin from landholders where id = landholder_id)
+where id > 0;
+
+-- removendo coluna do proprietario
+ALTER TABLE `geo-colony`.`plot_landholders` DROP COLUMN `landholder_id` 
+, DROP INDEX `landholder_id` ;
+
+-- removendo tabela de proprietarios
+drop table `geo-colony`.`landholders`;
+
+-- tabela de revisao
+CREATE  TABLE `geo-colony`.`revisions` (
+  `id` INT NOT NULL ,
+  `user_id` INT NOT NULL ,
+  `date` DATETIME NOT NULL ,
+  `approved` BIT NOT NULL DEFAULT 1 ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_revisions_1` (`user_id` ASC) ,
+  CONSTRAINT `fk_revisions_1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `geo-colony`.`users` (`id` )
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE);
+
+-- alterando tipo de tabela 
+ALTER TABLE `geo-colony`.`colonies` ENGINE = InnoDB ;
+
+-- criacao das tabelas de log
+CREATE  TABLE `geo-colony`.`colonies_log` (
+  `colony_id` INT NOT NULL ,
+  `revision_id` INT NOT NULL ,
+  `attribute` VARCHAR(255) NOT NULL ,
+  `value` VARCHAR(255) NULL ,
+  PRIMARY KEY (`colony_id`, `revision_id`, `attribute`) ,
+  INDEX `fk_colonies_log_1` (`colony_id` ASC) ,
+  INDEX `fk_colonies_log_2` (`revision_id` ASC)/* ,
+  CONSTRAINT `fk_colonies_log_1`
+    FOREIGN KEY (`colony_id` )
+    REFERENCES `geo-colony`.`colonies` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_colonies_log_2`
+    FOREIGN KEY (`revision_id` )
+    REFERENCES `geo-colony`.`revisions` (`id` )
+    ON DELETE SET NULL
+    ON UPDATE CASCADE*/);
+
+CREATE  TABLE `geo-colony`.`trails_log` (
+  `trail_id` INT NOT NULL ,
+  `revision_id` INT NOT NULL ,
+  `attribute` VARCHAR(255) NOT NULL ,
+  `value` VARCHAR(255) NULL ,
+  PRIMARY KEY (`trail_id`, `revision_id`, `attribute`) ,
+  INDEX `fk_trails_log_1` (`trail_id` ASC) ,
+  INDEX `fk_trails_log_2` (`revision_id` ASC)/* ,
+  CONSTRAINT `fk_colonies_log_1`
+    FOREIGN KEY (`colony_id` )
+    REFERENCES `geo-colony`.`colonies` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_colonies_log_2`
+    FOREIGN KEY (`revision_id` )
+    REFERENCES `geo-colony`.`revisions` (`id` )
+    ON DELETE SET NULL
+    ON UPDATE CASCADE*/);
+
+CREATE  TABLE `geo-colony`.`plots_log` (
+  `plot_id` INT NOT NULL ,
+  `revision_id` INT NOT NULL ,
+  `attribute` VARCHAR(255) NOT NULL ,
+  `value` VARCHAR(255) NULL ,
+  PRIMARY KEY (`plot_id`, `revision_id`, `attribute`) ,
+  INDEX `fk_plots_log_1` (`plot_id` ASC) ,
+  INDEX `fk_plots_log_2` (`revision_id` ASC)/* ,
+  CONSTRAINT `fk_colonies_log_1`
+    FOREIGN KEY (`colony_id` )
+    REFERENCES `geo-colony`.`colonies` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_colonies_log_2`
+    FOREIGN KEY (`revision_id` )
+    REFERENCES `geo-colony`.`revisions` (`id` )
+    ON DELETE SET NULL
+    ON UPDATE CASCADE*/);
+
+CREATE  TABLE `geo-colony`.`plot_landholders_log` (
+  `plot_landholder_id` INT NOT NULL ,
+  `revision_id` INT NOT NULL ,
+  `attribute` VARCHAR(255) NOT NULL ,
+  `value` VARCHAR(255) NULL ,
+  PRIMARY KEY (`plot_landholder_id`, `revision_id`, `attribute`) ,
+  INDEX `fk_plot_landholders_log_1` (`plot_landholder_id` ASC) ,
+  INDEX `fk_plot_landholders_log_2` (`revision_id` ASC)/* ,
+  CONSTRAINT `fk_colonies_log_1`
+    FOREIGN KEY (`colony_id` )
+    REFERENCES `geo-colony`.`colonies` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_colonies_log_2`
+    FOREIGN KEY (`revision_id` )
+    REFERENCES `geo-colony`.`revisions` (`id` )
+    ON DELETE SET NULL
+    ON UPDATE CASCADE*/);
+
+

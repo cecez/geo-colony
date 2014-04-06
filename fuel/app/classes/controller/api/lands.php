@@ -73,15 +73,19 @@ class Controller_Api_Lands extends Controller_Rest
 		{
 			$result = DB::query('
 				SELECT `trails`.`id`, `trails`.`name`, `plots`.`id` as `plot_id`, `plot_coordinates`.`latitude`, `plot_coordinates`.`longitude` 
-				FROM `trails` LEFT JOIN `plots` ON `trails`.`id` = `plots`.`trail_id` LEFT JOIN `plot_coordinates` ON `plots`.`id` = `plot_coordinates`.`plot_id`
-				WHERE `trails`.`id` = '.intval($id))->execute();
+				FROM `trails` LEFT JOIN 
+					 `plots` ON `trails`.`id` = `plots`.`trail_id` AND `plots`.active = 1 LEFT JOIN 
+					 `plot_coordinates` ON `plots`.`id` = `plot_coordinates`.`plot_id`
+				WHERE `trails`.`id` = '.intval($id) . ' AND `trails`.active = 1 ORDER BY plot_coordinates.id')->execute();
 		}
 		else if ($type == "L")
 		{
 			$result = DB::query('
-				SELECT `landholders`.`id`, CONCAT("P: ", `landholders`.`name`) AS name, `plots`.`id` as `plot_id`, `plot_coordinates`.`latitude`, `plot_coordinates`.`longitude` 
-				FROM `landholders` LEFT JOIN `plot_landholders` ON `landholders`.`id` = `plot_landholders`.`landholder_id` LEFT JOIN `plots` ON `plots`.`id` = `plot_landholders`.`plot_id` LEFT JOIN `plot_coordinates` ON `plots`.`id` = `plot_coordinates`.`plot_id`
-				WHERE `landholders`.`id` = '.intval($id))->execute();
+				SELECT `plot_landholders`.`id`, CONCAT("P: ", `plot_landholders`.`landholder_name`) AS name, `plots`.`id` as `plot_id`, `plot_coordinates`.`latitude`, `plot_coordinates`.`longitude` 
+				FROM `plot_landholders` LEFT JOIN 
+					 `plots` ON `plots`.`id` = `plot_landholders`.`plot_id` AND `plots`.active = 1 LEFT JOIN 
+					 `plot_coordinates` ON `plots`.`id` = `plot_coordinates`.`plot_id`
+				WHERE `plot_landholders`.`id` = '.intval($id) . ' AND `plot_landholders`.active = 1')->execute();
 		}
 		if (!empty($result)) {
 			return static::to_array($result, $type);

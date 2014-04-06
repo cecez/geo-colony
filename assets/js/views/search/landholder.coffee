@@ -18,6 +18,7 @@ class App.View.SearchLandholder extends Backbone.View
 		
 	fetch: (query) =>
 		@result.empty()
+		@collection.reset()
 		@collection.fetch
 			success: @onFetched
 			data: query: query

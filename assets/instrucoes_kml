@@ -1,0 +1,11 @@
+Instruções para geração do arquivo KML
+
+1. Abra o Google Earth
+2. Aproxime através do zoom a localização do lote
+3. Acesse "Adicionar > Polígono" no menu superior
+4. Escreva um nome para o polígono na janela que foi aberta
+5. Com a janela "Novo Polígono" ainda aberta, clique no mapa para inserir os pontos do lote
+6. Ao terminar de inserir os pontos, clique no botão "OK"
+7. Clique com o botão direito do mouse sobre o nome do polígono criado e selecione "Salvar lugar como"
+8. Escolha um nome para o arquivo, o local onde será salvo e altere o tipo de arquivo para "Kml (*.kml)"
+9. Pronto. O arquivo KML gerado pode ser utilizado no sistema 

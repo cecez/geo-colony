@@ -12,6 +12,9 @@ App.Collection.Plots = Backbone.Collection.extend
 	url: 'api/plots'
 	model: App.Model.Plot
 
+App.Model.User = Backbone.Model.extend
+	urlRoot: 'api/users'
+##TODO validacao js
 
 # Search
 
@@ -24,6 +27,12 @@ App.Model.SearchCity = Backbone.Model.extend
 App.Collection.SearchCities = Backbone.Collection.extend
 	url: 'api/cities/search'
 	model: App.Model.SearchCity
+	
+App.Model.SearchFonte = Backbone.Model.extend
+	label: -> @.get 'nome_fonte'
+App.Collection.SearchFontes = Backbone.Collection.extend
+	url: 'api/fontes/search'
+	model: App.Model.SearchFonte
 
 App.Model.SearchLandholder = Backbone.Model.extend()
 App.Collection.SearchLandholders = Backbone.Collection.extend

@@ -36,9 +36,13 @@ class Controller_Api_Cities extends Controller_Rest
 					'plots' => array(
 						'select' => array('id'),
 						'where' => array(
-							array('city_id', 'IN', $ids)
+							array('city_id', 'IN', $ids),
+							array('active', '1')									 
 						)
 					)
+				),
+				'where' => array(
+						array('active', '1'),
 				),
 				'order_by' => 'name'
 			));

@@ -1,12 +1,13 @@
 <?php
 
-class Model_Nucleu extends \Orm\Model
+class Model_User extends \Orm\Model
 {
 	protected static $_properties = array(
 		'id',
-		'user_id',
+		'permission_id',
 		'name',
-		'approved_by',
+		'email',
+		'password',
 		'created_at',
 		'updated_at'
 	);
